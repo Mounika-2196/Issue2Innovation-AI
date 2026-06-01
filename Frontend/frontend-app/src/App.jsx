@@ -3,6 +3,8 @@ import "./App.css";
 import Login from "./Login";
 import ParticleCanvas from "./ParticleCanvas";
 
+const API_URL = "https://issue2innovation-backend.onrender.com";
+
 const defaultAnalysis = {
   category: "Awaiting analysis",
   severity: "Not calculated",
@@ -175,7 +177,7 @@ function App() {
     const newMark = normalizeName(current?.voted_by) !== normalizeName(user.name);
 
     // call backend to persist user vote
-    fetch(`http://127.0.0.1:5000/ideas/${encodeURIComponent(id)}/mark_best`, {
+    fetch(`https://issue2innovation-backend.onrender.com/ideas/${encodeURIComponent(id)}/mark_best`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ mark: newMark, user_name: user.name }),
@@ -375,8 +377,8 @@ function App() {
     const loadDashboardData = async () => {
       try {
         const [reportsResponse, ideasResponse] = await Promise.all([
-          fetch("http://127.0.0.1:5000/reports"),
-          fetch("http://127.0.0.1:5000/ideas"),
+          fetch("https://issue2innovation-backend.onrender.com/reports"),
+          fetch("https://issue2innovation-backend.onrender.com/ideas"),
         ]);
 
         const reportsData = await reportsResponse.json();
@@ -433,7 +435,7 @@ function App() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/analyze", {
+      const response = await fetch("https://issue2innovation-backend.onrender.com/analyze", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -484,7 +486,7 @@ function App() {
       const ai_score = Math.min(100, (ideaForm.summary || "").length);
       const ai_top = ai_score > 120;
 
-      const response = await fetch("http://127.0.0.1:5000/ideas", {
+      const response = await fetch("https://issue2innovation-backend.onrender.com/ideas", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -667,69 +669,69 @@ function App() {
           </button>
         </section>
 
-      {result && showHistory && (
-        <aside className="insights-panel" aria-label="Problem insights">
-          <div className="mini-card">
-            <p className="eyebrow">Reports</p>
-            <strong>{history.length}</strong>
-            <span>saved in SQLite database</span>
-          </div>
+        {result && showHistory && (
+          <aside className="insights-panel" aria-label="Problem insights">
+            <div className="mini-card">
+              <p className="eyebrow">Reports</p>
+              <strong>{history.length}</strong>
+              <span>saved in SQLite database</span>
+            </div>
 
-          <div className="mini-card">
-            <p className="eyebrow">Trending Problems</p>
-            {Object.keys(sectorStats).length === 0 ? (
-              <p>No reports yet</p>
-            ) : (
-              <div className="chart">
-                {Object.entries(sectorStats).map(([sector, count]) => (
-                  <div className="chart-row" key={sector}>
-                    <span>{sector}</span>
-                    <div>
-                      <i style={{ width: `${(count / maxSectorCount) * 100}%` }} />
+            <div className="mini-card">
+              <p className="eyebrow">Trending Problems</p>
+              {Object.keys(sectorStats).length === 0 ? (
+                <p>No reports yet</p>
+              ) : (
+                <div className="chart">
+                  {Object.entries(sectorStats).map(([sector, count]) => (
+                    <div className="chart-row" key={sector}>
+                      <span>{sector}</span>
+                      <div>
+                        <i style={{ width: `${(count / maxSectorCount) * 100}%` }} />
+                      </div>
+                      <b>{count}</b>
                     </div>
-                    <b>{count}</b>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+                  ))}
+                </div>
+              )}
+            </div>
 
-          <div className="mini-card">
-            <p className="eyebrow">Most Affected Areas</p>
-            {locationStats.length === 0 ? (
-              <p>Areas appear after reports are analyzed.</p>
-            ) : (
-              <ul className="area-list">
-                {locationStats.map(([location, count]) => (
-                  <li key={location}>
-                    <span>{location}</span>
-                    <b>{count}</b>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+            <div className="mini-card">
+              <p className="eyebrow">Most Affected Areas</p>
+              {locationStats.length === 0 ? (
+                <p>Areas appear after reports are analyzed.</p>
+              ) : (
+                <ul className="area-list">
+                  {locationStats.map(([location, count]) => (
+                    <li key={location}>
+                      <span>{location}</span>
+                      <b>{count}</b>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
 
-          <div className="mini-card">
-            <p className="eyebrow">Major Problems</p>
-            {majorProblems.length === 0 ? (
-              <p>Sector pressure appears after reports load.</p>
-            ) : (
-              <ul className="area-list">
-                {majorProblems.map(([sector, count]) => (
-                  <li key={sector}>
-                    <span>{sector}</span>
-                    <b>{count} reports</b>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+            <div className="mini-card">
+              <p className="eyebrow">Major Problems</p>
+              {majorProblems.length === 0 ? (
+                <p>Sector pressure appears after reports load.</p>
+              ) : (
+                <ul className="area-list">
+                  {majorProblems.map(([sector, count]) => (
+                    <li key={sector}>
+                      <span>{sector}</span>
+                      <b>{count} reports</b>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
 
 
-        </aside>
-      )}
-    </main>
+          </aside>
+        )}
+      </main>
 
       <section className={`sector-pool-section page-panel ${viewMode === "hackathon" ? "panel-active" : "panel-hidden"}`}>
         <div className="section-heading pool-heading">
@@ -1000,8 +1002,8 @@ function App() {
                         {recognizedIdea
                           ? suggestedIdea?.summary || "Chosen from the problem sector, urgency, and keywords in the report."
                           : isOpen
-                          ? "A student team can pick this public problem and build their own idea."
-                          : suggestedIdea?.summary || "Chosen from the problem sector, urgency, and keywords in the report."
+                            ? "A student team can pick this public problem and build their own idea."
+                            : suggestedIdea?.summary || "Chosen from the problem sector, urgency, and keywords in the report."
                         }
                       </p>
                     </div>
@@ -1152,35 +1154,35 @@ function App() {
             <h2>Problem History</h2>
           </div>
 
-        {history.length === 0 ? (
-          <p className="empty-state">Analyzed reports will appear here like a mini database.</p>
-        ) : (
-          <div className="history-list">
-            {history.map((item) => (
-              <button
-                type="button"
-                key={item.id}
-                onClick={() => {
-                  setResult(item);
-                  setShowHistory(true);
-                  window.setTimeout(() => {
-                    document.getElementById("ai-report-result")?.scrollIntoView({ behavior: "smooth" });
-                  }, 100);
-                }}
-              >
-                <span>
-                  {item.sector || "General"}
-                  {normalizeName(item.submitted_by) === normalizeName(user?.name) ? " | Submitted by you" : ""}
-                </span>
-                <strong>{item.title}</strong>
-                <small>
-                  {item.location} | {item.createdAt}
-                </small>
-              </button>
-            ))}
-          </div>
-        )}
-      </section>
+          {history.length === 0 ? (
+            <p className="empty-state">Analyzed reports will appear here like a mini database.</p>
+          ) : (
+            <div className="history-list">
+              {history.map((item) => (
+                <button
+                  type="button"
+                  key={item.id}
+                  onClick={() => {
+                    setResult(item);
+                    setShowHistory(true);
+                    window.setTimeout(() => {
+                      document.getElementById("ai-report-result")?.scrollIntoView({ behavior: "smooth" });
+                    }, 100);
+                  }}
+                >
+                  <span>
+                    {item.sector || "General"}
+                    {normalizeName(item.submitted_by) === normalizeName(user?.name) ? " | Submitted by you" : ""}
+                  </span>
+                  <strong>{item.title}</strong>
+                  <small>
+                    {item.location} | {item.createdAt}
+                  </small>
+                </button>
+              ))}
+            </div>
+          )}
+        </section>
       )}
     </div>
   );
