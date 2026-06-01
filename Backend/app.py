@@ -51,6 +51,10 @@ GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
 model = None
 
 try:
+    print("genai =", genai)
+    print("GEMINI_API_KEY =", os.getenv("GEMINI_API_KEY"))
+    print("GEMINI_MODEL =", os.getenv("GEMINI_MODEL"))
+
     if genai and GEMINI_API_KEY:
         genai.configure(api_key=GEMINI_API_KEY)
         model = genai.GenerativeModel(GEMINI_MODEL)
