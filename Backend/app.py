@@ -45,10 +45,20 @@ load_env_file()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
 
-if genai and GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
-    model = genai.GenerativeModel(GEMINI_MODEL)
-else:
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+
+model = None
+
+try:
+    if genai and GEMINI_API_KEY:
+        genai.configure(api_key=GEMINI_API_KEY)
+        model = genai.GenerativeModel(GEMINI_MODEL)
+        print("✅ Gemini initialized successfully")
+    else:
+        print("❌ Gemini API key not found or library missing")
+except Exception as e:
+    print(f"❌ Gemini initialization failed: {e}")
     model = None
 
 
@@ -613,9 +623,9 @@ Use this exact JSON schema:
                 "warning": str(exc),
             }
         )
-if __name__ == "__main__":
+if __name__ == "__main__":\
     port = int(os.environ.get("PORT", 5000))
-    app.run(
+app.run(
         host="0.0.0.0",
         port=port,
         debug=False
